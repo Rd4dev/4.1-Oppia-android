@@ -242,7 +242,7 @@ kt_jvm_binary(
     testonly = True,
     main_class = "org.oppia.android.scripts.coverage.RunCoverageKt",
     runtime_deps = [
-        "//scripts/src/java/org/oppia/android/scripts/coverage:run_coverage_lib",
+        "//scripts/src/java/org/oppia/android/scripts/coverage:run_coverage",
     ],
 )
 

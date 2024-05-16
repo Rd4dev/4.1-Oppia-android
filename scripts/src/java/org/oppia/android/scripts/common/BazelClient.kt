@@ -83,6 +83,11 @@ class BazelClient(private val rootDirectory: File, private val commandExecutor: 
     } else listOf()
   }
 
+  fun runCoverage(bazelTestTarget: String): List<String> {
+    val coverageResultOuput = executeBazelCommand("coverage", bazelTestTarget)
+    return coverageResultOuput
+  }
+
   /**
    * Returns the list of direct and indirect production Maven third-party dependencies on which the
    * specified binary depends.
