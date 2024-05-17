@@ -6,6 +6,9 @@ import org.oppia.android.scripts.common.CommandExecutorImpl
 import org.oppia.android.scripts.common.ScriptBackgroundCoroutineDispatcher
 import java.io.File
 import java.util.concurrent.TimeUnit
+import kotlin.collections.List
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class CoverageRunner {
   companion object {
@@ -24,7 +27,22 @@ class CoverageRunner {
 
         val coverageData = bazelClient.runCoverage(bazelTestTarget)
         println("Coverage Data: $coverageData")
+
+        val coverageDataPath = extractCoverageDataPath(coverageData)
+        println("Coverage Data Path: $coverageDataPath")
       }
+    }
+
+    fun extractCoverageDataPath(coverageData: List<String>): String? {
+      val regex = ".*coverage\\.dat$".toRegex()
+      for (line in coverageData) {
+        val match = regex.find(line)
+        val extractedPath = match?.value?.substringAfterLast(",")?.trim()
+        if (extractedPath != null) {
+          return extractedPath
+        }
+      }
+      return null
     }
   }
 }
