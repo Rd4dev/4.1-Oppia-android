@@ -16,7 +16,7 @@ import java.util.regex.Pattern
 
 class CoverageRunner {
   companion object {
-    fun runWithCoverageAsync(pathToRoot: String, bazelTestTarget: String) {
+    fun runWithCoverageAsync(pathToRoot: String, bazelTestTarget: String) : CoverageReport {
       println("In CoverageRunner script - path to root is: $pathToRoot")
 
       val rootDirectory = File(pathToRoot).absoluteFile
@@ -35,8 +35,10 @@ class CoverageRunner {
         val coverageDataPath = extractCoverageDataPath(coverageData)
         println("Coverage Data Path: $coverageDataPath")
 
-        val parsedCoverageReport = parseCoverageData(coverageDataPath)
-        println("Parsed Coverage Report: $parsedCoverageReport")
+        val parsedCoverageReport = parseCoverageData(bazelTestTarget, coverageDataPath)
+        // println("Parsed Coverage Report: $parsedCoverageReport")
+
+        return parsedCoverageReport
       }
     }
 
@@ -52,14 +54,12 @@ class CoverageRunner {
       return null
     }
 
-    fun parseCoverageData(coverageDataFilePath: String?): CoverageReport {
-
-
+    fun parseCoverageData(bazelTestTarget: String, coverageDataFilePath: String?): CoverageReport {
 
       // Read and parse the coverage.dat file
       val coverageDataFile = File(coverageDataFilePath)
 
-      var currentFilePath: String? = null
+      /*var currentFilePath: String? = null
       var linesFound = 0
       var linesHit = 0
       var coveredLines = mutableListOf<CoveredLine>()
@@ -124,18 +124,61 @@ class CoverageRunner {
       }
 
       val coverageReport = CoverageReport.newBuilder()
-        .setBazelTestTarget("example_case")
+        .setBazelTestTarget(bazelTestTarget)
         .addAllCoveredFile(coveredFiles)
         .build()
 
-      println(coverageReport)
+      // println(coverageReport)
 
-      return coverageReport
+      return coverageReport*/
 
 
       /*val coverageReportBuilder = CoverageReport.newBuilder()
       println("Coverage Report Builder: $coverageReportBuilder for the coverage data file path: $coverageDataFilePath")
       return coverageReportBuilder.build()*/
+
+      var linesFound = 0
+      var linesHit = 0
+      val coveredLines = mutableListOf<CoveredLine>()
+
+      coverageDataFile.forEachLine { line ->
+        when {
+          line.startsWith("DA:") -> {
+            val parts = line.substringAfter("DA:").split(",")
+            val lineNumber = parts[0].toInt()
+            val hitCount = parts[1].toInt()
+            val coverage = if (hitCount > 0) Coverage.FULL else Coverage.NONE
+            println("Coverage: $coverage")
+            coveredLines.add(
+              CoveredLine.newBuilder()
+                .setLineNumber(lineNumber)
+                .setCoverage(coverage)
+                .build()
+            )
+          }
+
+          // parse LH / LF
+          line.startsWith("LH:") -> {
+            linesHit = line.substringAfter("LH:").toInt()
+          }
+
+          line.startsWith("LF:") -> {
+            linesFound = line.substringAfter("LF:").toInt()
+          }
+        }
+      }
+
+      val coveredFile = CoveredFile.newBuilder()
+        .addAllCoveredLine(coveredLines)
+        .setLinesFound(linesFound)
+        .setLinesHit(linesHit)
+        .build()
+
+      return CoverageReport.newBuilder()
+        .setBazelTestTarget(bazelTestTarget)
+        .addCoveredFile(coveredFile)
+        .build()
+
     }
   }
 }

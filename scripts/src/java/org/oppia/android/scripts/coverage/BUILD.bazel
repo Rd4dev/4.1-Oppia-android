@@ -9,6 +9,7 @@ kt_jvm_library(
     visibility = ["//scripts:oppia_script_binary_visibility"],
     deps = [
         "//scripts/src/java/org/oppia/android/scripts/coverage:coverage_runner",
+        "//scripts/src/java/org/oppia/android/scripts/coverage:coverage_reporter",
         "//scripts/src/java/org/oppia/android/scripts/common:bazel_client",
         "//scripts/src/java/org/oppia/android/scripts/common:git_client",
         "//scripts/src/java/org/oppia/android/scripts/proto:coverage_java_proto_lite",
@@ -20,6 +21,20 @@ kt_jvm_library(
     testonly = True,
     srcs = [
         "CoverageRunner.kt",
+    ],
+    visibility = ["//scripts:oppia_script_binary_visibility"],
+    deps = [
+        "//scripts/src/java/org/oppia/android/scripts/common:bazel_client",
+        "//scripts/src/java/org/oppia/android/scripts/common:git_client",
+        "//scripts/src/java/org/oppia/android/scripts/proto:coverage_java_proto_lite",
+    ],
+)
+
+kt_jvm_library(
+    name = "coverage_reporter",
+    testonly = True,
+    srcs = [
+        "CoverageReporter.kt",
     ],
     visibility = ["//scripts:oppia_script_binary_visibility"],
     deps = [

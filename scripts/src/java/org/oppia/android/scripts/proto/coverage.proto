@@ -23,8 +23,8 @@ message CoveredLine {
   Coverage coverage = 2;
 
   enum Coverage {
-    FULL = 0;
-    PARTIAL = 1;
+    UNSPECIFIED = 0;
+    FULL = 1;
     NONE = 2;
   }
 }
