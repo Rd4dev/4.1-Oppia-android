@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "org.oppia.android.scripts.proto";
+option java_multiple_files = true;
+
+message CoverageReport {
+  string bazel_test_target = 1;
+  repeated CoveredFile covered_file = 2;
+}
+
+message CoveredFile {
+  string file_path = 1;
+  string file_sha1_hash = 2;
+  repeated CoveredLine covered_line = 3;
+  int32 lines_found = 4;
+  int32 lines_hit = 5;
+}
+
+message CoveredLine {
+  int32 line_number = 1;
+  Coverage coverage = 2;
+
+  enum Coverage {
+    FULL = 0;
+    PARTIAL = 1;
+    NONE = 2;
+  }
+}

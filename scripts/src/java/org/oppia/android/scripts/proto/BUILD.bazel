@@ -21,6 +21,18 @@ java_lite_proto_library(
 )
 
 oppia_proto_library(
+    name = "coverage_proto",
+    srcs = ["coverage.proto"],
+    visibility = ["//scripts:oppia_script_binary_visibility"],
+)
+
+java_lite_proto_library(
+    name = "coverage_java_proto_lite",
+    visibility = ["//scripts:oppia_script_library_visibility"],
+    deps = [":coverage_proto"],
+)
+
+oppia_proto_library(
     name = "filename_pattern_validation_checks_proto",
     srcs = ["filename_pattern_validation_checks.proto"],
     visibility = ["//scripts:oppia_script_binary_visibility"],
