@@ -1,7 +1,9 @@
 # Configurations for arguments that should automatically be added to Bazel commands.
 build --android_databinding_use_v3_4_args \
     --experimental_android_databinding_v2 \
-    --android_databinding_use_androidx
+    --android_databinding_use_androidx \
+    --collect_code_coverage \
+    --instrument_test_targets
 
 # Ensure all built Java files treat warnings as errors (similar to the Kotlin configuration) to help
 # reduce code smell & potential bugs during development.

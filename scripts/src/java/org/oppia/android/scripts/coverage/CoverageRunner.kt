@@ -56,6 +56,11 @@ class CoverageRunner {
 
     fun parseCoverageData(bazelTestTarget: String, coverageDataFilePath: String?): CoverageReport {
 
+      /*
+      * The parser is just defined for single file
+      * But this is to be altered with needs for including Locale tests too
+      * */
+
       // Read and parse the coverage.dat file
       val coverageDataFile = File(coverageDataFilePath)
 
@@ -137,12 +142,17 @@ class CoverageRunner {
       println("Coverage Report Builder: $coverageReportBuilder for the coverage data file path: $coverageDataFilePath")
       return coverageReportBuilder.build()*/
 
+      var filePath = ""
       var linesFound = 0
       var linesHit = 0
       val coveredLines = mutableListOf<CoveredLine>()
 
       coverageDataFile.forEachLine { line ->
         when {
+          line.startsWith("SF:") -> {
+            filePath = line.substringAfter("SF:")
+          }
+
           line.startsWith("DA:") -> {
             val parts = line.substringAfter("DA:").split(",")
             val lineNumber = parts[0].toInt()
@@ -169,6 +179,7 @@ class CoverageRunner {
       }
 
       val coveredFile = CoveredFile.newBuilder()
+        .setFilePath(filePath)
         .addAllCoveredLine(coveredLines)
         .setLinesFound(linesFound)
         .setLinesHit(linesHit)

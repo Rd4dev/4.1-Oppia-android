@@ -9,7 +9,11 @@ class CoverageReporter {
 
       val coverageRatio = computeCoverageRatio(report)
       println("Coverage Ratio: $coverageRatio")
-      // generateMarkdown(report)
+
+      val mdReport = generateMarkdownReport(report, coverageRatio)
+      println("MD Report: $mdReport")
+
+      generateHTMLReport(report, coverageRatio)
     }
 
     fun computeCoverageRatio(coverageReport: CoverageReport) : Double {
@@ -27,8 +31,26 @@ class CoverageReporter {
       return coverageRatio
     }
 
-    /*fun generateMarkdown(coverageReport: CoverageReport){
+    fun generateMarkdownReport(coverageReport: CoverageReport, coverageRatio: Double) : String {
+      val sb = StringBuilder()
+      sb.append("# Coverage Report\n\n")
+      sb.append("## Test Target\n")
+      sb.append("${coverageReport.bazelTestTarget}\n\n")
 
-    }*/
+      val coveredFile = coverageReport.getCoveredFile(0)
+      sb.append("## Covered File\n")
+      sb.append("**File Path**: ${coveredFile.filePath}\n\n")
+      sb.append("**Lines Found**: ${coveredFile.linesFound}\n\n")
+      sb.append("**Lines Hit**: ${coveredFile.linesHit}\n\n")
+      sb.append("## Coverage Ratio: ${coverageRatio}%")
+      sb.append("\n### Covered Lines\n")
+      coveredFile.coveredLineList.forEach { coveredLine ->
+        sb.append("  - **Line Number**: ${coveredLine.lineNumber}, **Coverage**: ${coveredLine.coverage}\n")
+      }
+      sb.append("\n")
+      return sb.toString()
+    }
+
+    fun generateHTMLReport(coverageReport: CoverageReport, coverageRatio: Double)
   }
 }
